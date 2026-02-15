@@ -1,0 +1,100 @@
+FROM archlinux:latest
+
+ENV LANG=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8 \
+    TERM=xterm
+
+# Update and install base development tools and required packages
+RUN pacman -Syu --noconfirm && \
+    pacman -S --noconfirm \
+        base-devel \
+        git \
+        sudo \
+        python \
+        python-pip \
+        vapoursynth \
+        ffmpeg && \
+    pacman -Scc --noconfirm
+
+# Create a non-root user (required for yay and makepkg)
+RUN useradd -m builder && \
+    echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+USER builder
+WORKDIR /home/builder
+
+# Install yay (AUR helper)
+RUN git clone https://aur.archlinux.org/yay.git && \
+    cd yay && \
+    makepkg -si --noconfirm && \
+    cd .. && rm -rf yay
+
+
+
+
+RUN yay -Sy --noconfirm
+
+WORKDIR /home/builder
+
+# Clone AUR PKGBUILD
+#RUN git clone https://aur.archlinux.org/vapoursynth-plugin-vsjetpack-git.git
+#WORKDIR /home/builder/vapoursynth-plugin-vsjetpack-git
+# Replace source in PKGBUILD via sed (example hash shown)
+#RUN sed -i 's|^source=.*|source=("vsjetpack::git+https://github.com/Jaded-Encoding-Thaumaturgy/vs-jetpack.git#commit=6a88b9a59d67051afbb02d556117e6eaf20bc147")|' PKGBUILD && \
+#    sed -i '/^pkgver()/,/^}/c\pkgver() {\n  echo "r0.6a88b9a59d67051afbb02d556117e6eaf20bc147"\n}' PKGBUILD
+
+#RUN makepkg -si --noconfirm
+
+RUN yay -S --noconfirm vapoursynth-plugin-bestsource
+RUN yay -S --noconfirm ffms2
+
+RUN yay -S --noconfirm vapoursynth-plugin-mvtools-git
+RUN yay -S --noconfirm vapoursynth-plugin-dfttest2-cpu-git
+RUN yay -S --noconfirm vapoursynth-plugin-vsakarin-git
+RUN yay -S --noconfirm vapoursynth-plugin-znedi3-git
+#RUN yay -S --noconfirm vapoursynth-plugin-eedi3m-git # for havs
+
+RUN yay -S --noconfirm vapoursynth-plugin-vsjetpack
+
+
+#Cuda
+#RUN yay -S --noconfirm cuda
+#RUN yay -S --noconfirm wget
+#RUN wget https://archive.archlinux.org/packages/c/cuda/cuda-12.9.1-2-x86_64.pkg.tar.zst     && sudo pacman -U --noconfirm  cuda-12.9.1-2-x86_64.pkg.tar.zst     
+
+
+#RUN source /etc/profile.d/cuda.sh && yay -S --noconfirm vapoursynth-plugin-dfttest2-git
+#RUN yay -S --noconfirm vapoursynth-plugin-dfttest2-cpu-git 
+#RUN source /etc/profile.d/cuda.sh && yay -S --noconfirm vapoursynth-plugin-eedi2cuda-git 
+#RUN yay -S --noconfirm vapoursynth-plugin-eedi2-git 
+#RUN yay -S --noconfirm vapoursynth-plugin-bwdif-git 
+#RUN yay -S --noconfirm vapoursynth-plugin-eedi3m-git
+#RUN yay -S --noconfirm vapoursynth-plugin-bm3d-git 
+#RUN yay -S --noconfirm vapoursynth-plugin-nnedi3-git 
+
+
+#RUN mkdir -p /workspace
+#WORKDIR /workspace
+#RUN wget https://github.com/Jaded-Encoding-Thaumaturgy/vapoursynth-SNEEDIF/archive/refs/tags/R3.tar.gz
+#RUN tar -xvf R3.tar.gz
+#RUN cd vapoursynth-SNEEDIF-R3 && meson setup builddir --buildtype release && meson compile -C builddir
+#RUN cp vapoursynth-SNEEDIF-R3/builddir/libsneedif.so /usr/lib/vapoursynth/
+
+
+# For for nvidia docker and archlinux
+#RUN echo "/lib64" > /etc/ld.so.conf.d/lib64.conf
+#ENV CUDA_PATH=/opt/cuda
+#ENV NVCC_CCBIN='/usr/bin/g++'
+#ENV PATH="$PATH:/opt/cuda/bin"
+
+# Clean up cache
+USER root
+RUN rm -rf /home/builder/.cache && \
+    rm -rf /var/cache/pacman/pkg/*
+
+# Default working directory
+WORKDIR /workspace
+RUN mkdir -p /workspace
+
+CMD ["bash"]
+
