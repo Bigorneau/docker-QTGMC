@@ -1,0 +1,330 @@
+From e7934df9471371102b1ad8eae26f76825560692d Mon Sep 17 00:00:00 2001
+From: Patrice Blin <contact@patriceblin.com>
+Date: Thu, 16 Apr 2026 18:29:20 +0200
+Subject: [PATCH] fix headers path
+
+---
+ src/EntryPoint.c      | 2 +-
+ src/MVAnalyse.c       | 4 ++--
+ src/MVAnalysisData.h  | 2 +-
+ src/MVBlockFPS.c      | 4 ++--
+ src/MVCompensate.c    | 4 ++--
+ src/MVDegrains.cpp    | 4 ++--
+ src/MVDepan.cpp       | 4 ++--
+ src/MVFinest.c        | 4 ++--
+ src/MVFlow.cpp        | 4 ++--
+ src/MVFlowBlur.c      | 4 ++--
+ src/MVFlowFPS.c       | 4 ++--
+ src/MVFlowFPSHelper.c | 4 ++--
+ src/MVFlowFPSHelper.h | 2 +-
+ src/MVFlowInter.c     | 4 ++--
+ src/MVFrame.cpp       | 2 +-
+ src/MVMask.c          | 4 ++--
+ src/MVRecalculate.c   | 4 ++--
+ src/MVSCDetection.c   | 4 ++--
+ src/MVSuper.c         | 4 ++--
+ src/PlaneOfBlocks.cpp | 2 +-
+ src/SimpleResize.cpp  | 2 +-
+ 21 files changed, 36 insertions(+), 36 deletions(-)
+
+diff --git a/src/EntryPoint.c b/src/EntryPoint.c
+index 6f8a343..4d93d4d 100644
+--- a/src/EntryPoint.c
++++ b/src/EntryPoint.c
+@@ -1,4 +1,4 @@
+-#include <VapourSynth4.h>
++#include <vapoursynth/VapourSynth4.h>
+ #include <stdlib.h>
+ 
+ #include "CPU.h"
+diff --git a/src/MVAnalyse.c b/src/MVAnalyse.c
+index f3986c5..c202eb5 100644
+--- a/src/MVAnalyse.c
++++ b/src/MVAnalyse.c
+@@ -3,8 +3,8 @@
+ #include <stdlib.h>
+ #include <string.h>
+ 
+-#include <VapourSynth4.h>
+-#include <VSHelper4.h>
++#include <vapoursynth/VapourSynth4.h>
++#include <vapoursynth/VSHelper4.h>
+ 
+ #include "Bullshit.h"
+ #include "CPU.h"
+diff --git a/src/MVAnalysisData.h b/src/MVAnalysisData.h
+index 710a42a..962e0ff 100644
+--- a/src/MVAnalysisData.h
++++ b/src/MVAnalysisData.h
+@@ -30,7 +30,7 @@ extern "C" {
+ #include <stdint.h>
+ #include <stdio.h>
+ 
+-#include <VapourSynth4.h>
++#include <vapoursynth/VapourSynth4.h>
+ 
+ 
+ static const char prop_MVTools_MVAnalysisData[] = "MVTools_MVAnalysisData";
+diff --git a/src/MVBlockFPS.c b/src/MVBlockFPS.c
+index c8ccf56..9afc668 100644
+--- a/src/MVBlockFPS.c
++++ b/src/MVBlockFPS.c
+@@ -22,8 +22,8 @@
+ #include <stdlib.h>
+ #include <string.h>
+ 
+-#include <VapourSynth4.h>
+-#include <VSHelper4.h>
++#include <vapoursynth/VapourSynth4.h>
++#include <vapoursynth/VSHelper4.h>
+ 
+ #include "Bullshit.h"
+ #include "CopyCode.h"
+diff --git a/src/MVCompensate.c b/src/MVCompensate.c
+index 3caf755..c252c98 100644
+--- a/src/MVCompensate.c
++++ b/src/MVCompensate.c
+@@ -19,8 +19,8 @@
+ // http://www.gnu.org/copyleft/gpl.html .
+ 
+ #include <limits.h>
+-#include <VapourSynth4.h>
+-#include <VSHelper4.h>
++#include <vapoursynth/VapourSynth4.h>
++#include <vapoursynth/VSHelper4.h>
+ 
+ #include "CopyCode.h"
+ #include "Fakery.h"
+diff --git a/src/MVDegrains.cpp b/src/MVDegrains.cpp
+index 57be230..64a690f 100644
+--- a/src/MVDegrains.cpp
++++ b/src/MVDegrains.cpp
+@@ -22,8 +22,8 @@
+ #include <string>
+ #include <unordered_map>
+ 
+-#include <VapourSynth4.h>
+-#include <VSHelper4.h>
++#include <vapoursynth/VapourSynth4.h>
++#include <vapoursynth/VSHelper4.h>
+ 
+ #include "Bullshit.h"
+ #include "CPU.h"
+diff --git a/src/MVDepan.cpp b/src/MVDepan.cpp
+index f419c4f..496d78e 100644
+--- a/src/MVDepan.cpp
++++ b/src/MVDepan.cpp
+@@ -4,8 +4,8 @@
+ 
+ #include <fftw3.h>
+ 
+-#include <VapourSynth4.h>
+-#include <VSHelper4.h>
++#include <vapoursynth/VapourSynth4.h>
++#include <vapoursynth/VSHelper4.h>
+ 
+ #include "Fakery.h"
+ #include "MVAnalysisData.h"
+diff --git a/src/MVFinest.c b/src/MVFinest.c
+index c4c6f79..83f0d6f 100644
+--- a/src/MVFinest.c
++++ b/src/MVFinest.c
+@@ -18,8 +18,8 @@
+ // http://www.gnu.org/copyleft/gpl.html .
+ 
+ #include <limits.h>
+-#include <VapourSynth4.h>
+-#include <VSHelper4.h>
++#include <vapoursynth/VapourSynth4.h>
++#include <vapoursynth/VSHelper4.h>
+ 
+ #include "MaskFun.h"
+ #include "CommonMacros.h"
+diff --git a/src/MVFlow.cpp b/src/MVFlow.cpp
+index 962e5cf..de56af2 100644
+--- a/src/MVFlow.cpp
++++ b/src/MVFlow.cpp
+@@ -22,8 +22,8 @@
+ #include <stdlib.h>
+ #include <string.h>
+ 
+-#include <VapourSynth4.h>
+-#include <VSHelper4.h>
++#include <vapoursynth/VapourSynth4.h>
++#include <vapoursynth/VSHelper4.h>
+ 
+ #include "Bullshit.h"
+ #include "CommonFunctions.h"
+diff --git a/src/MVFlowBlur.c b/src/MVFlowBlur.c
+index 41f6103..87440a9 100644
+--- a/src/MVFlowBlur.c
++++ b/src/MVFlowBlur.c
+@@ -22,8 +22,8 @@
+ #include <stdlib.h>
+ #include <string.h>
+ 
+-#include <VapourSynth4.h>
+-#include <VSHelper4.h>
++#include <vapoursynth/VapourSynth4.h>
++#include <vapoursynth/VSHelper4.h>
+ 
+ #include "Bullshit.h"
+ #include "CommonFunctions.h"
+diff --git a/src/MVFlowFPS.c b/src/MVFlowFPS.c
+index f4b358c..326f21d 100644
+--- a/src/MVFlowFPS.c
++++ b/src/MVFlowFPS.c
+@@ -22,8 +22,8 @@
+ #include <stdlib.h>
+ #include <string.h>
+ 
+-#include <VapourSynth4.h>
+-#include <VSHelper4.h>
++#include <vapoursynth/VapourSynth4.h>
++#include <vapoursynth/VSHelper4.h>
+ 
+ #include "Bullshit.h"
+ #include "MVAnalysisData.h"
+diff --git a/src/MVFlowFPSHelper.c b/src/MVFlowFPSHelper.c
+index a5fc652..d8262ff 100644
+--- a/src/MVFlowFPSHelper.c
++++ b/src/MVFlowFPSHelper.c
+@@ -1,6 +1,6 @@
+ 
+-#include <VapourSynth4.h>
+-#include <VSHelper4.h>
++#include <vapoursynth/VapourSynth4.h>
++#include <vapoursynth/VSHelper4.h>
+ 
+ #include "MaskFun.h"
+ #include "SimpleResize.h"
+diff --git a/src/MVFlowFPSHelper.h b/src/MVFlowFPSHelper.h
+index fed7c40..4ef66f8 100644
+--- a/src/MVFlowFPSHelper.h
++++ b/src/MVFlowFPSHelper.h
+@@ -5,7 +5,7 @@
+ extern "C" {
+ #endif
+ 
+-#include <VapourSynth4.h>
++#include <vapoursynth/VapourSynth4.h>
+ 
+ #include "MVAnalysisData.h"
+ #include "SimpleResize.h"
+diff --git a/src/MVFlowInter.c b/src/MVFlowInter.c
+index ec17c07..1dd2a6f 100644
+--- a/src/MVFlowInter.c
++++ b/src/MVFlowInter.c
+@@ -22,8 +22,8 @@
+ #include <stdlib.h>
+ #include <string.h>
+ 
+-#include <VapourSynth4.h>
+-#include <VSHelper4.h>
++#include <vapoursynth/VapourSynth4.h>
++#include <vapoursynth/VSHelper4.h>
+ 
+ #include "Bullshit.h"
+ #include "Fakery.h"
+diff --git a/src/MVFrame.cpp b/src/MVFrame.cpp
+index 5ceb6e2..6a6a75f 100644
+--- a/src/MVFrame.cpp
++++ b/src/MVFrame.cpp
+@@ -19,7 +19,7 @@
+ 
+ #include <stdio.h>
+ 
+-#include <VSHelper.h>
++#include <vapoursynth/VSHelper.h>
+ 
+ #include "CPU.h"
+ #include "MVFrame.h"
+diff --git a/src/MVMask.c b/src/MVMask.c
+index 75a75f5..9004f1e 100644
+--- a/src/MVMask.c
++++ b/src/MVMask.c
+@@ -21,8 +21,8 @@
+ #include <limits.h>
+ #include <math.h>
+ 
+-#include <VapourSynth4.h>
+-#include <VSHelper4.h>
++#include <vapoursynth/VapourSynth4.h>
++#include <vapoursynth/VSHelper4.h>
+ 
+ #include "MaskFun.h"
+ #include "MVAnalysisData.h"
+diff --git a/src/MVRecalculate.c b/src/MVRecalculate.c
+index 4a3faba..a1dcab8 100644
+--- a/src/MVRecalculate.c
++++ b/src/MVRecalculate.c
+@@ -3,8 +3,8 @@
+ #include <stdlib.h>
+ #include <string.h>
+ 
+-#include <VapourSynth4.h>
+-#include <VSHelper4.h>
++#include <vapoursynth/VapourSynth4.h>
++#include <vapoursynth/VSHelper4.h>
+ 
+ #include "CPU.h"
+ #include "DCTFFTW.h"
+diff --git a/src/MVSCDetection.c b/src/MVSCDetection.c
+index 7326485..be7f540 100644
+--- a/src/MVSCDetection.c
++++ b/src/MVSCDetection.c
+@@ -17,8 +17,8 @@
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA, or visit
+ // http://www.gnu.org/copyleft/gpl.html .
+ 
+-#include <VapourSynth4.h>
+-#include <VSHelper4.h>
++#include <vapoursynth/VapourSynth4.h>
++#include <vapoursynth/VSHelper4.h>
+ 
+ #include "Fakery.h"
+ #include "MVAnalysisData.h"
+diff --git a/src/MVSuper.c b/src/MVSuper.c
+index 9a80549..aeb05fe 100644
+--- a/src/MVSuper.c
++++ b/src/MVSuper.c
+@@ -2,8 +2,8 @@
+ #include <stdlib.h>
+ #include <string.h>
+ 
+-#include <VapourSynth4.h>
+-#include <VSHelper4.h>
++#include <vapoursynth/VapourSynth4.h>
++#include <vapoursynth/VSHelper4.h>
+ 
+ #include "MVFrame.h"
+ #include "CommonMacros.h"
+diff --git a/src/PlaneOfBlocks.cpp b/src/PlaneOfBlocks.cpp
+index 13dc537..f7d2d52 100644
+--- a/src/PlaneOfBlocks.cpp
++++ b/src/PlaneOfBlocks.cpp
+@@ -19,7 +19,7 @@
+ 
+ // For posix_memalign.
+ #define _POSIX_C_SOURCE 200112L
+-#include <VSHelper4.h>
++#include <vapoursynth/VSHelper4.h>
+ 
+ #include "CPU.h"
+ #include "PlaneOfBlocks.h"
+diff --git a/src/SimpleResize.cpp b/src/SimpleResize.cpp
+index 376b25e..8efac56 100644
+--- a/src/SimpleResize.cpp
++++ b/src/SimpleResize.cpp
+@@ -6,7 +6,7 @@
+ #include <algorithm>
+ #include <stdlib.h>
+ 
+-#include <VSHelper.h>
++#include <vapoursynth/VSHelper.h>
+ 
+ #include "CPU.h"
+ #include "SimpleResize.h"
+-- 
+2.43.0
+

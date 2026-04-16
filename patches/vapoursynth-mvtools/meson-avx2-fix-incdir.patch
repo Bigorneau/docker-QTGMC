@@ -1,0 +1,32 @@
+From d60a84e036e936bc0f33eb28a2f00338f9173fbe Mon Sep 17 00:00:00 2001
+From: Patrice Blin <contact@patriceblin.com>
+Date: Thu, 16 Apr 2026 18:05:41 +0200
+Subject: [PATCH] meson: avx2 fix incdir
+
+---
+ meson.build | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index 33e7e75..3186b80 100644
+--- a/meson.build
++++ b/meson.build
+@@ -160,7 +160,6 @@ if host_cpu_family.startswith('x86')
+ 
+   helper_libs += static_library('avx2',
+                                 libavx2_sources,
+-                                include_directories: incdir,
+                                 cpp_args: [cflags, '-mavx2', '-mtune=haswell'],
+                                 install: false)
+ endif
+@@ -191,7 +190,6 @@ py = import('python').find_installation(pure: false)
+ shared_module('mvtools',
+               sources,
+               dependencies: deps,
+-              include_directories: incdir,
+               link_args: ldflags,
+               c_args: cflags,
+               cpp_args: cflags,
+-- 
+2.43.0
+

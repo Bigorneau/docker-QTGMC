@@ -1,0 +1,27 @@
+From e9eab908fcb71e77b75a80b5581d692de366e7b0 Mon Sep 17 00:00:00 2001
+From: Patrice Blin <contact@patriceblin.com>
+Date: Thu, 16 Apr 2026 17:53:28 +0200
+Subject: [PATCH] use system vapoursynth
+
+---
+ meson.build | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index f60a166..33e7e75 100644
+--- a/meson.build
++++ b/meson.build
+@@ -30,9 +30,7 @@ nasm_flags = [
+ ]
+ 
+ 
+-incdir = include_directories(
+-  'vapoursynth/include'
+-)
++dependency('vapoursynth')
+ 
+ 
+ sources = [
+-- 
+2.43.0
+
