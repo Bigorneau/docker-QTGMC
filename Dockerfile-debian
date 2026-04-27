@@ -95,40 +95,6 @@ RUN export PKG_CONFIG_PATH=$(pkg-config --variable pc_path pkg-config)
 
 COPY patches/ ${PATCHDIR}
 
-# https://gitlab.archlinux.org/archlinux/packaging/packages/vapoursynth/-/blob/main/PKGBUILD
-RUN cd "${SRCDIR}" && \
-    git clone https://github.com/vapoursynth/vapoursynth.git && \
-    cd vapoursynth && \
-    git checkout 76762f6a07d5169c21903972f67827fc108020ba && \
-    ./autogen.sh && \
-    ./configure --prefix=/usr --disable-static && \
-    sed -i -e 's/ -shared / -Wl,-O1,--as-needed\0/g' libtool && \
-    make && \
-    sudo make install
-## https://gitlab.archlinux.org/archlinux/packaging/packages/vapoursynth/-/blob/main/PKGBUILD
-#RUN cd "${SRCDIR}" && \
-#    git clone https://github.com/vapoursynth/vapoursynth.git && \
-#    cd vapoursynth && \
-#    git checkout R74 && \
-#    mkdir -p "${BUILDDIR}/vapoursynth" && \
-#    cd "${BUILDDIR}/vapoursynth" && \
-#    meson setup "${SRCDIR}/vapoursynth" && \
-#    ninja && \
-#    sudo ninja install
-## https://gitlab.archlinux.org/archlinux/packaging/packages/vapoursynth/-/blob/main/PKGBUILD
-#RUN cd "${SRCDIR}" && \
-#    git clone https://github.com/vapoursynth/vapoursynth.git && \
-#    cd vapoursynth && \
-#    git checkout R74 && \
-#    pipx install . && \
-#    pipx ensurepath && \
-#    vapoursynth config
-
-## https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=vapoursynth-lib-libp2p-git
-#RUN cd "${SRCDIR}" && \
-#    git clone https://github.com/sekrit-twc/libp2p.git && \
-#    cd libp2p && \
-
 # https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=avisynthplus-git
 RUN cd "${SRCDIR}" && \
     git clone https://github.com/AviSynth/AviSynthPlus.git && \
@@ -140,6 +106,18 @@ RUN cd "${SRCDIR}" && \
           -DCMAKE_INSTALL_PREFIX:PATH=/usr && \
     cmake --build "${BUILDDIR}/AviSynthPlus" && \
     sudo cmake --install "${BUILDDIR}/AviSynthPlus"
+
+# https://gitlab.archlinux.org/archlinux/packaging/packages/vapoursynth/-/blob/main/PKGBUILD
+RUN cd "${SRCDIR}" && \
+    git clone https://github.com/vapoursynth/vapoursynth.git && \
+    cd vapoursynth && \
+    git checkout 76762f6a07d5169c21903972f67827fc108020ba && \
+    ./autogen.sh && \
+    CPPFLAGS="-I/usr/include/avisynth" ./configure --prefix=/usr --disable-static --libdir=/usr/lib --with-python-prefix=/usr --with-python-module-path=/usr/lib/python3/dist-packages && \
+    sed -i -e 's/ -shared / -Wl,-O1,--as-needed\0/g' libtool && \
+    make && \
+    sudo make install && \
+    rm -f vapoursynth.la
 
 # https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=vapoursynth-plugin-bestsource-git
 RUN cd "${SRCDIR}" && \
@@ -154,7 +132,7 @@ RUN cd "${SRCDIR}" && \
     git apply ${PATCHDIR}/bestsource/0002-fix-headers-path.patch && \
     mkdir -p "${BUILDDIR}/bestsource" && \
     cd "${BUILDDIR}/bestsource" && \
-    meson setup "${SRCDIR}/bestsource" && \
+    meson setup "${SRCDIR}/bestsource" --libdir /usr/lib/vapoursynth && \
     ninja && \
     sudo ninja install
 
@@ -167,9 +145,11 @@ RUN cd "${SRCDIR}" && \
     patch -p1 -i "${PATCHDIR}/ffms2/esee.patch" && \
     mkdir -p src/config && \
     autoreconf -ivf && \
-    ./configure --enable-static=no --enable-shared=yes --enable-avisynth && \
+    ./configure --enable-static=no --enable-shared=yes --enable-avisynth --prefix=/usr --libdir=/usr/lib && \
     make && \
-    sudo make install
+    sudo make install && \
+    sudo mkdir -p /usr/lib/vapoursynth && \
+    sudo ln -sf /usr/lib/libffms2.so /usr/lib/vapoursynth/libffms2.so
 
 # https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=vapoursynth-plugin-mvtools-git
 RUN cd "${SRCDIR}" && \
@@ -181,53 +161,10 @@ RUN cd "${SRCDIR}" && \
     git apply ${PATCHDIR}/vapoursynth-mvtools/fix-headers-path.patch && \
     mkdir -p "${BUILDDIR}/vapoursynth-mvtools" && \
     cd "${BUILDDIR}/vapoursynth-mvtools" && \
-    meson setup "${SRCDIR}/vapoursynth-mvtools" --libdir /usr/local/lib/vapoursynth && \
+    meson setup "${SRCDIR}/vapoursynth-mvtools" --libdir /usr/lib/vapoursynth && \
     ninja && \
     sudo ninja install
  
-## https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=vapoursynth-plugin-dfttest2-cpu-git
-#RUN cd "${SRCDIR}" && \
-#    git clone https://github.com/AmusementClub/vs-dfttest2.git && \
-#    cd vs-dfttest2 && \
-#    git submodule update --init --recursive && \
-#    cmake \
-#	-B "${BUILDDIR}/vs-dfttest2" \
-#	-S "${SRCDIR}/vs-dfttest2" \
-#	-G Ninja \
-#	-DCMAKE_BUILD_TYPE=Release \
-#	-DCMAKE_INSTALL_PREFIX=/usr \
-#	-DCMAKE_CXX_FLAGS_RELEASE="$CXXFLAGS -ffast-math" \
-#	-DENABLE_CUDA=0 \
-#	-DENABLE_CPU=1 && \
-#    cmake --build "${BUILDDIR}/vs-dfttest2" --config Release && \ 
-#    sudo cmake --install "${BUILDDIR}/vs-dfttest2"
-
-
-
-## https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=vapoursynth-plugin-vsakarin-git
-## llvm-config found: NO found '19.1.7' but need ['>= 10.0', '< 16']
-## Run-time dependency LLVM found: NO (tried config-tool)
-#RUN cd "${SRCDIR}" && \
-#    git clone https://github.com/akarinVS/vapoursynth-plugin.git && \
-#    cd vapoursynth-plugin && \
-#    patch -p1 -i "${PATCHDIR}/vapoursynth-plugin/vapoursynth-plugin.diff" && \
-#    mkdir -p "${BUILDDIR}/vapoursynth-plugin" && \
-#    cd "${BUILDDIR}/vapoursynth-plugin" && \
-#    meson setup "${SRCDIR}/vapoursynth-plugin" --buildtype=release -Dstatic-llvm=false && \
-#    meson compile -C "${BUILDDIR}/vapoursynth-plugin" && \
-#    meson install -C "${BUILDDIR}/vapoursynth-plugin"
-
-#RUN cd "${SRCDIR}" && \
-#    git clone https://github.com/llvm/llvm-project.git && \
-#    cd llvm-project && \
-#    git checkout llvmorg-16.0.6 -b tag-llvmorg-16.0.6 && \
-#    cmake \
-#	-B "${BUILDDIR}/llvm-project" \
-#	-S "${SRCDIR}/llvm-project" \
-#	-G Ninja \
-#	-DCMAKE_BUILD_TYPE=Release && \
-
-
 # https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=vapoursynth-plugin-znedi3-git
 RUN cd "${SRCDIR}" && \
     git clone https://github.com/sekrit-twc/znedi3 && \
@@ -239,20 +176,10 @@ RUN cd "${SRCDIR}" && \
         graphengine && \
     rm -fr vsxx/VapourSynth && \
     make X86=0 X86_AVX512=0 && \
-    sudo mkdir -p /usr/local/lib/vapoursynth && \
-    sudo cp vsznedi3.so /usr/local/lib/vapoursynth/libvsznedi3.so
-
-## https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=vapoursynth-plugin-vsjetpack-git
-#RUN cd "${SRCDIR}" && \
-#    git clone https://github.com/Jaded-Encoding-Thaumaturgy/vs-jetpack.git && \
-#    cd vs-jetpack && \
-#    rm -f dist/*.whl && \
-#    python3 -m build --wheel --no-isolation && \
-#    python3 -m installer dist/*.whl
+    sudo mkdir -p /usr/lib/vapoursynth && \
+    sudo cp vsznedi3.so /usr/lib/vapoursynth/libvsznedi3.so
 
 # https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=avisynth-plugin-masktools2-git
-# CXXFLAGS=" $(pkg-config --cflags avisynth)"
-# -DCMAKE_INSTALL_PREFIX=/usr
 RUN cd "${SRCDIR}" && \
     git clone https://github.com/pinterf/masktools.git && \
     cd masktools && \
@@ -260,6 +187,8 @@ RUN cd "${SRCDIR}" && \
        -B "${BUILDDIR}/masktool" \
        -S "${SRCDIR}/masktools" \
        -G Ninja \
-       -DCMAKE_BUILD_TYPE=None && \
+       -DCMAKE_BUILD_TYPE=None \
+       -DCMAKE_INSTALL_PREFIX=/usr && \
     cmake --build "${BUILDDIR}/masktool" && \
     sudo cmake --install "${BUILDDIR}/masktool"
+
