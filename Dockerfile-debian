@@ -183,12 +183,62 @@ RUN cd "${SRCDIR}" && \
 RUN cd "${SRCDIR}" && \
     git clone https://github.com/pinterf/masktools.git && \
     cd masktools && \
+    rm -rf include && \
     cmake \
        -B "${BUILDDIR}/masktool" \
        -S "${SRCDIR}/masktools" \
        -G Ninja \
        -DCMAKE_BUILD_TYPE=None \
-       -DCMAKE_INSTALL_PREFIX=/usr && \
+       -DCMAKE_INSTALL_PREFIX=/usr \
+       -DCMAKE_C_FLAGS="-I/usr/include/avisynth" \
+       -DCMAKE_CXX_FLAGS="-I/usr/include/avisynth" && \
     cmake --build "${BUILDDIR}/masktool" && \
     sudo cmake --install "${BUILDDIR}/masktool"
 
+# https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=avisynth-plugin-rgtools-git
+RUN cd "${SRCDIR}" && \
+    git clone https://github.com/pinterf/RgTools.git && \
+    cd RgTools && \
+    cmake \
+       -B "${BUILDDIR}/RgTools" \
+       -S "${SRCDIR}/RgTools" \
+       -G Ninja \
+       -DCMAKE_BUILD_TYPE=None \
+       -DCMAKE_INSTALL_PREFIX=/usr && \
+    cmake --build "${BUILDDIR}/RgTools" && \
+    sudo cmake --install "${BUILDDIR}/RgTools"
+
+# ?
+RUN sudo cp "${PACKAGESDIR}/Zs_RF_Shared/Zs_RF_Shared.avsi" /usr/lib/avisynth
+
+# https://github.com/pinterf/AddGrainC.git
+RUN cd "${SRCDIR}" && \
+    git clone https://github.com/pinterf/AddGrainC.git && \
+    cd AddGrainC && \
+    rm -rf AddGrainC/avs && \
+    cmake \
+       -B "${BUILDDIR}/AddGrainC" \
+       -S "${SRCDIR}/AddGrainC" \
+       -G Ninja \
+       -DCMAKE_BUILD_TYPE=None \
+       -DCMAKE_INSTALL_PREFIX=/usr \
+       -DCMAKE_C_FLAGS="-I/usr/include/avisynth" \
+       -DCMAKE_CXX_FLAGS="-I/usr/include/avisynth" && \
+    cmake --build "${BUILDDIR}/AddGrainC" && \
+    sudo cmake --install "${BUILDDIR}/AddGrainC"
+
+# https://github.com/pinterf/dfttest.git
+RUN cd "${SRCDIR}" && \
+    git clone https://github.com/pinterf/dfttest.git && \
+    cd dfttest && \
+    rm -rf dfttest/avs && \
+    cmake \
+       -B "${BUILDDIR}/dfttest" \
+       -S "${SRCDIR}/dfttest" \
+       -G Ninja \
+       -DCMAKE_BUILD_TYPE=None \
+       -DCMAKE_INSTALL_PREFIX=/usr \
+       -DCMAKE_C_FLAGS="-I/usr/include/avisynth" \
+       -DCMAKE_CXX_FLAGS="-I/usr/include/avisynth" && \
+    cmake --build "${BUILDDIR}/dfttest" && \
+    sudo cmake --install "${BUILDDIR}/dfttest"
