@@ -132,7 +132,7 @@ RUN cd "${SRCDIR}" && \
     git apply ${PATCHDIR}/bestsource/0002-fix-headers-path.patch && \
     mkdir -p "${BUILDDIR}/bestsource" && \
     cd "${BUILDDIR}/bestsource" && \
-    meson setup "${SRCDIR}/bestsource" --libdir /usr/lib/vapoursynth && \
+    meson setup "${SRCDIR}/bestsource" --prefix=/usr --libdir /usr/lib/vapoursynth && \
     ninja && \
     sudo ninja install
 
@@ -161,7 +161,7 @@ RUN cd "${SRCDIR}" && \
     git apply ${PATCHDIR}/vapoursynth-mvtools/fix-headers-path.patch && \
     mkdir -p "${BUILDDIR}/vapoursynth-mvtools" && \
     cd "${BUILDDIR}/vapoursynth-mvtools" && \
-    meson setup "${SRCDIR}/vapoursynth-mvtools" --libdir /usr/lib/vapoursynth && \
+    meson setup "${SRCDIR}/vapoursynth-mvtools" --prefix=/usr --libdir /usr/lib/vapoursynth && \
     ninja && \
     sudo ninja install
  
