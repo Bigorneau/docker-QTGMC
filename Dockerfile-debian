@@ -1,10 +1,10 @@
 #FROM debian:trixie-slim as builder
 FROM debian:sid-slim AS builder
 
-#ENV LANG=en_US.UTF-8 \
-#    LC_ALL=en_US.UTF-8 \
-#    LC_CTYPE=en_US.UTF-8 \
-#    LC_ALL=en_US.UTF-8
+ENV LANG=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8 \
+    LC_CTYPE=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8
 
 RUN apt update
 RUN apt-get install -y --no-install-recommends \
@@ -20,7 +20,9 @@ RUN apt-get install -y --no-install-recommends \
     pkg-config \
     meson \
     cmake \
-    git
+    git \
+    nasm \
+    pipx
 
 RUN apt-get install -y --no-install-recommends \
     ffmpeg \
@@ -47,7 +49,9 @@ ENV BUILDDIR="/tmp/vapour"
 ENV PATCHDIR="/tmp/patches"
 ENV PACKAGESDIR="/tmp/packages"
 
-ENV PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig:/usr/local/share/pkgconfig:${PKG_CONFIG_PATH}"
+# pkg-config --variable pc_path pkg-config
+# /usr/local/lib/x86_64-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig:/usr/local/share/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/lib/pkgconfig:/usr/share/pkgconfig
+#ENV PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig:/usr/local/share/pkgconfig:${PKG_CONFIG_PATH}"
 
 RUN sudo mkdir -p "${SRCDIR}" && \
     sudo chown builder:builder "${SRCDIR}"
@@ -80,7 +84,14 @@ RUN mkdir -p "${SRCDIR}/vapour-synth" && \
     find "${PACKAGESDIR}/" -iname "*.7z" -exec p7zip -f -d {} \;
 
 USER builder
-WORKDIR /home/builder
+ENV HOME=/home/builder
+ENV PIPX_HOME="$HOME/opt/pipx" \
+    PIPX_BIN_DIR="$HOME/bin"
+ENV PATH="$PATH:$HOME/bin"
+
+WORKDIR "$HOME"
+
+RUN export PKG_CONFIG_PATH=$(pkg-config --variable pc_path pkg-config)
 
 COPY patches/ ${PATCHDIR}
 
@@ -90,38 +101,68 @@ RUN cd "${SRCDIR}" && \
     cd vapoursynth && \
     git checkout 76762f6a07d5169c21903972f67827fc108020ba && \
     ./autogen.sh && \
-    ./configure --disable-static && \
+    ./configure --prefix=/usr --disable-static && \
     sed -i -e 's/ -shared / -Wl,-O1,--as-needed\0/g' libtool && \
     make && \
     sudo make install
+## https://gitlab.archlinux.org/archlinux/packaging/packages/vapoursynth/-/blob/main/PKGBUILD
+#RUN cd "${SRCDIR}" && \
+#    git clone https://github.com/vapoursynth/vapoursynth.git && \
+#    cd vapoursynth && \
+#    git checkout R74 && \
+#    mkdir -p "${BUILDDIR}/vapoursynth" && \
+#    cd "${BUILDDIR}/vapoursynth" && \
+#    meson setup "${SRCDIR}/vapoursynth" && \
+#    ninja && \
+#    sudo ninja install
+## https://gitlab.archlinux.org/archlinux/packaging/packages/vapoursynth/-/blob/main/PKGBUILD
+#RUN cd "${SRCDIR}" && \
+#    git clone https://github.com/vapoursynth/vapoursynth.git && \
+#    cd vapoursynth && \
+#    git checkout R74 && \
+#    pipx install . && \
+#    pipx ensurepath && \
+#    vapoursynth config
+
+## https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=vapoursynth-lib-libp2p-git
+#RUN cd "${SRCDIR}" && \
+#    git clone https://github.com/sekrit-twc/libp2p.git && \
+#    cd libp2p && \
+
+# https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=avisynthplus-git
+RUN cd "${SRCDIR}" && \
+    git clone https://github.com/AviSynth/AviSynthPlus.git && \
+    cd AviSynthPlus && \
+    git checkout v3.7.5 && \
+    cmake -S "${SRCDIR}/AviSynthPlus" \
+          -B "${BUILDDIR}/AviSynthPlus" \
+          -G Ninja \
+          -DCMAKE_INSTALL_PREFIX:PATH=/usr && \
+    cmake --build "${BUILDDIR}/AviSynthPlus" && \
+    sudo cmake --install "${BUILDDIR}/AviSynthPlus"
 
 # https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=vapoursynth-plugin-bestsource-git
 RUN cd "${SRCDIR}" && \
     git clone https://github.com/vapoursynth/bestsource.git && \
     cd bestsource && \
+    git checkout R17 && \
     git submodule init && \
     git config submodule.libp2p.url "https://github.com/sekrit-twc/libp2p.git" && \
     git -c protocol.file.allow=always submodule update && \
+    rm -rf vapoursynth AviSynthPlus && \
+    git apply ${PATCHDIR}/bestsource/0001-meson-fix-include_directories.patch && \
+    git apply ${PATCHDIR}/bestsource/0002-fix-headers-path.patch && \
     mkdir -p "${BUILDDIR}/bestsource" && \
     cd "${BUILDDIR}/bestsource" && \
     meson setup "${SRCDIR}/bestsource" && \
     ninja && \
     sudo ninja install
 
-RUN cd "${SRCDIR}" && \
-    git clone https://github.com/AviSynth/AviSynthPlus.git && \
-    cd AviSynthPlus && \
-    cmake -S "${SRCDIR}/AviSynthPlus" \
-          -B "${BUILDDIR}/AviSynthPlus" \
-          -G Ninja && \
-    cmake --build "${BUILDDIR}/AviSynthPlus" && \
-    sudo cmake --install "${BUILDDIR}/AviSynthPlus"
-    
-
 # https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=ffms2-git
 RUN cd "${SRCDIR}" && \
     git clone https://github.com/FFMS/ffms2 && \
     cd ffms2 && \
+    git checkout 5.0 && \
     rm -fr src/vapoursynth/{Vapoursynth,VSHelper}.h && \
     patch -p1 -i "${PATCHDIR}/ffms2/esee.patch" && \
     mkdir -p src/config && \
@@ -140,8 +181,7 @@ RUN cd "${SRCDIR}" && \
     git apply ${PATCHDIR}/vapoursynth-mvtools/fix-headers-path.patch && \
     mkdir -p "${BUILDDIR}/vapoursynth-mvtools" && \
     cd "${BUILDDIR}/vapoursynth-mvtools" && \
-    meson setup "${SRCDIR}/vapoursynth-mvtools" --libdir /usr/lib/vapoursynth && \
-    find /usr/local -name "VapourSynth4.h" && \
+    meson setup "${SRCDIR}/vapoursynth-mvtools" --libdir /usr/local/lib/vapoursynth && \
     ninja && \
     sudo ninja install
  

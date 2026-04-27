@@ -1,0 +1,64 @@
+From ecc12d4e9d2f5db49d846a327cde7c6745b83c64 Mon Sep 17 00:00:00 2001
+From: Patrice Blin <dev@patriceblin.com>
+Date: Sun, 26 Apr 2026 23:25:18 +0200
+Subject: [PATCH] fix headers
+
+---
+ src/avisynth.cpp    | 4 ++--
+ src/synthshared.cpp | 4 ++--
+ src/vapoursynth.cpp | 4 ++--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/src/avisynth.cpp b/src/avisynth.cpp
+index bae8333..9827bb7 100644
+--- a/src/avisynth.cpp
++++ b/src/avisynth.cpp
+@@ -23,8 +23,8 @@
+ #include "bsshared.h"
+ #include "version.h"
+ #include "synthshared.h"
+-#include "../AviSynthPlus/avs_core/include/avisynth.h"
+-#include <VSHelper4.h>
++#include <avisynth/avisynth.h>
++#include <vapoursynth/VSHelper4.h>
+ #include <vector>
+ #include <algorithm>
+ #include <memory>
+diff --git a/src/synthshared.cpp b/src/synthshared.cpp
+index 7137510..035eb4d 100644
+--- a/src/synthshared.cpp
++++ b/src/synthshared.cpp
+@@ -19,7 +19,7 @@
+ //  THE SOFTWARE.
+ 
+ #include "synthshared.h"
+-#include "VSHelper4.h"
++#include <vapoursynth/VSHelper4.h>
+ 
+ extern "C" {
+ #include <libavutil/avutil.h>
+@@ -110,4 +110,4 @@ void SetSynthFrameProperties(int n, const std::unique_ptr<BestVideoFrame> &Src,
+     mapSetInt("FlipVertical", VP.FlipVerical);
+     mapSetInt("FlipHorizontal", VP.FlipHorizontal);
+     mapSetInt("Rotation", VP.Rotation);
+-}
+\ No newline at end of file
++}
+diff --git a/src/vapoursynth.cpp b/src/vapoursynth.cpp
+index 0b59ead..9a71ea2 100644
+--- a/src/vapoursynth.cpp
++++ b/src/vapoursynth.cpp
+@@ -24,8 +24,8 @@
+ #include "bsshared.h"
+ #include "version.h"
+ #include "synthshared.h"
+-#include <VapourSynth4.h>
+-#include <VSHelper4.h>
++#include <vapoursynth/VapourSynth4.h>
++#include <vapoursynth/VSHelper4.h>
+ #include <vector>
+ #include <algorithm>
+ #include <memory>
+-- 
+2.53.0
+
